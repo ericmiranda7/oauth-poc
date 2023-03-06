@@ -6,13 +6,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
-@RestController
+@org.springframework.stereotype.Controller
 public class Controller {
 
     AuthService authService;
@@ -22,19 +25,31 @@ public class Controller {
         this.authService = authService;
     }
 
+    // todo(): create a registration endpoint ?
+
     @GetMapping("/authorize")
         // this function returns html
         // html contains form which posts to /token
-    void getConsent(){};
-
-
-    @GetMapping("/token")
-    ResponseEntity<Void> getToken(
+    @ResponseBody
+    @CrossOrigin
+    ModelAndView authorize(
             @RequestParam("response_type") String responseType, // will be token for us (implicit grant)
             @RequestParam("client_id") String clientId,
             @RequestParam("redirect_uri") String redirectUri,
-            HttpServletResponse response) throws IOException {
+            ModelMap model
+    ) {
+        model.addAttribute("response_type", responseType);
+        model.addAttribute("client_id", clientId);
+        model.addAttribute("redirect_uri", redirectUri);
+        return new ModelAndView("redirect:/login.html", model);
+    }
 
+
+    @PostMapping("/token")
+    @ResponseBody
+    ResponseEntity<Void> getToken(@RequestBody String rb) {
+        int startInd = rb.indexOf("redirectUri=");
+        String redirectUri = URLDecoder.decode(rb.substring(startInd+12, rb.indexOf("clientId") - 1), StandardCharsets.UTF_8);
         boolean consented = true; // mocking user giving consent
 
         if (!consented) {
@@ -42,13 +57,12 @@ public class Controller {
         }
 
         // consented, continue auth flow
-        String token = authService.generateToken();
+        String token = "#access_token=" + authService.generateToken();
 
         // redirect the browser to the client redirectUri with the access token
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/x-www-form-urlencoded");
-        headers.add("Location", redirectUri + "?access_token=" + token
-                    + "&token_type=example");
-        return new ResponseEntity<>(null, headers, HttpStatus.FOUND);
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .location(URI.create(redirectUri + token))
+                .build();
     }
 }

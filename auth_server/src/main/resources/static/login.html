@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OAuth Server</title>
+</head>
+<body>
+<form action="/token" method="post">
+    <label for="response_type"></label><input name="responseType" id="response_type" type="text" hidden/>
+    <label for="redirect_uri"></label><input name="redirectUri" id="redirect_uri" type="text" hidden>
+    <label for="client_id"></label><input name="clientId" id="client_id" type="text" hidden/>
+    <p>Allow access to super secret data?</p>
+    <button type="submit">Yes</button>
+    <button>No</button>
+</form>
+
+<script>
+    // Parse query string and extract parameter values
+    const queryParams = new URLSearchParams(window.location.search);
+    const responseType = queryParams.get('response_type');
+    const redirectUri = queryParams.get('redirect_uri');
+    const clientId = queryParams.get('client_id');
+
+    // Pre-populate form fields with parameter values
+    if (responseType) {
+        document.getElementById('response_type').value = responseType;
+    }
+    if (redirectUri) {
+        document.getElementById('redirect_uri').value = redirectUri;
+    }
+    if (clientId) {
+        document.getElementById('client_id').value = clientId;
+    }
+</script>
+</body>
+</html>
