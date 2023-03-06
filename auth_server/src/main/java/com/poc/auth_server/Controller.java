@@ -21,6 +21,12 @@ public class Controller {
         super();
     }
 
+    @GetMapping("/authorize")
+        // this function returns html
+        // html contains form which posts to /token
+    void getConsent(){};
+
+
     @GetMapping("/token")
     ResponseEntity<Void> getToken(
             @RequestParam("response_type") String responseType, // will be token for us (implicit grant)
