@@ -19,6 +19,7 @@ public class Controller {
 
     public Controller(AuthService authService) {
         super();
+        this.authService = authService;
     }
 
     @GetMapping("/authorize")
