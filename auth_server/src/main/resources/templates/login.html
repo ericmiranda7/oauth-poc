@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>OAuth Server</title>
+    <title>OAuth Servers</title>
 </head>
 <body>
 <form action="/token" method="post">
@@ -10,7 +10,7 @@
                                               hidden/>
     <label for="redirect_uri"></label><input name="redirectUri" id="redirect_uri" type="text" hidden>
     <label for="client_id"></label><input name="clientId" value='${client_id}' id="client_id" type="text"/>
-    <p>Allow access to super secret data?</p>
+    <p th:text="${client_id}">Allow access to super secret data?</p>
     <button type="submit">Yes</button>
     <button>No</button>
 </form>

@@ -26,14 +26,14 @@ public class Controller {
 
     @GetMapping("/authorize")
     @CrossOrigin
-    ModelAndView authorize(@RequestParam("response_type") String responseType,
+    String authorize(@RequestParam("response_type") String responseType,
                            @RequestParam("client_id") String clientId,
                            @RequestParam("redirect_uri") String redirectUri,
                            ModelMap model) {
         model.addAttribute("response_type", responseType);
         model.addAttribute("client_id", clientId);
         model.addAttribute("redirect_uri", redirectUri);
-        return new ModelAndView("redirect:/login.html", model);
+        return "login.html";
     }
 
 
